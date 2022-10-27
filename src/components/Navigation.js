@@ -18,8 +18,12 @@ export default function Navigation() {
                 1. npm install react-router-dom
                 2. import { Link } from 'react-router-dom'          */}
             <Nav>
+              {currentUser &&
+              <>
                 <Link to='/ToDos' className='nav-link'>ToDos</Link>
                 <Link to='/Categories' className='nav-link'>Categories</Link>
+                </>
+              }
                 {!currentUser &&
                   <Link to='/login' className='nav-link'>Login</Link>
                 }

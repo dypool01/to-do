@@ -1,13 +1,14 @@
 import React from 'react'
 import './App.css';
-import Login from './Auth/Login';
-import ToDo from './components/ToDos/ToDo';
-import Categories from './components/Categories/Categories';
-import NotFound from './components/Routing/NotFound';
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import AuthProvider from './contexts/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
 import Navigation from './components/Navigation';
+import NotFound from './components/NotFound';
+import Footer from './components/Footer';
+import Login from './Auth/Login';
+import ProtectedRoute from './components/ProtectedRoute';
+import Categories from './components/Categories/Categories';
+import ToDo from './components/ToDos/ToDo';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path='/categories' element={<ProtectedRoute><Categories /></ProtectedRoute>} />
           <Route path='*' element={<NotFound />} />
         </Routes>
+        <Footer />
       </Router>
       </AuthProvider>
     </div>
