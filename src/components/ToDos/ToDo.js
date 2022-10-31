@@ -4,6 +4,8 @@ import SingleToDo from './SingleToDo';
 import axios from 'axios'
 import FilterCat from './FilterCat';
 import './ToDo.css'
+import { useAuth } from '../../contexts/AuthContext'
+import ToDoCreate from './ToDoCreate';
 
 //Steps to Read functionality
 //1. add useState and useEffect to the react import
@@ -16,6 +18,10 @@ import './ToDo.css'
 
 export default function ToDos() {
   const [todos, setToDos] = useState([]);
+
+  const {currentUser} = useAuth()
+
+  const [showCreate, setShowCreate] = useState(false);
 
   //Filtering steps - use .filter() to create a limited list of resources.
 //1. Create a hook that will store values for what the user wants to filter resources by...this hook will store the categoryId for the category they want to filter by.
@@ -43,6 +49,23 @@ return (
       <article className='bg-info p-5'>
           <h1 className='text-center'>ToDo's Dashboard</h1>
       </article>
+
+     {/* CREATE UI */}
+     {currentUser.email === process.env.REACT_APP_EMAIL_ADMIN &&
+            <div className='bg-dark p-2 mb-3 text-center'>
+                <button className='btn btn-info' onClick={() => setShowCreate(!showCreate)}>
+                    {!showCreate ? 'Create New ToDo' : "Close Form"}
+                </button>
+                <div className='createContainer'>
+                    {showCreate &&
+                        //Conditionally render ToDoCreate if showCreate is true
+                        <ToDoCreate getToDos={getToDos} setShowCreate={setShowCreate} />
+                    }
+                </div>
+            </div>
+        }
+        {/* END OF CREATE UI */}
+
       <FilterCat setFilter={setFilter} />
       <Container>
           <article className='todoGallery row justify-content-center'>
@@ -52,10 +75,10 @@ return (
                   //SingleToDo will map each todo to a tile in our display. We add
                   //getToDos so we can pass GET todo functionality into SingleToDo
                   //for Edit/Delete (we added this during Edit/Delete functionality)
-                  <SingleToDo key={x.todoId} todo={x} />
+                  <SingleToDo key={x.toDoId} todo={x} getToDos={getToDos} />
               ) :
               todos.filter(x => x.categoryId === filter).map(x =>
-                  <SingleToDo key={x.todoId} todo={x} />
+                  <SingleToDo key={x.toDoId} todo={x} getToDos={getToDos} />
                   )}
                   {filter !== 0 && todos.filter(x => x.categoryId === filter).length === 0 && 
                       <h2 className='alert alert-warning text-dark'>

@@ -4,6 +4,8 @@ import { Container } from 'react-bootstrap'
 //npm install axios - the package that handles our API calls
 import axios from 'axios'
 import SingleCategory from './SingleCategory';
+import CatCreate from './CatCreate';
+import {useAuth} from '../../contexts/AuthContext'
 
 //Steps to Read functionality
 //1. add useState and useEffect to the react import
@@ -19,6 +21,10 @@ export default function Categories() {
 //below is a hook to store the data returned from the API
 const [categories, setCategories] = useState([]);
 //we set useState for our hook above to [] so .map will not error out before data is returned. .map needs a collection even if its empty.
+
+const {currentUser} = useAuth()
+//Below we write a hook to show/hide the create form
+const [showCreate, setShowCreate] = useState(false);
 
 //below we write a function to get our categories from the API
 const getCategories = () => {
@@ -39,18 +45,38 @@ const getCategories = () => {
         <article className='bg-info p-5'>
             <h1 className='text-center'>Categories Dashboard</h1>
         </article>
+       
+       {/* CREATE UI */}
+       {currentUser.email === process.env.REACT_APP_EMAIL_ADMIN &&
+            <div className='bg-dark p-2 mb-3 text-center'>
+                {showCreate ?
+                <>
+                    <button onClick={() => setShowCreate(false)} className='btn btn-warning'>Cancel</button>
+                    <CatCreate
+                        getCategories={getCategories}
+                        setShowCreate={setShowCreate} />
+                </>
+            : <button className='btn btn-info' onClick={() => setShowCreate(true)}>Create Category</button>
+                }
+            </div>
+        }
+        {/* END CREATE UI */}
+       
         <Container className='p-2'>
             <table className='table bg-info table-dark my-3'>
                 <thead className='table-secondary text-uppercase'>
                     <tr>
                         <th>Name</th>
                         <th>Description</th>
+                        {currentUser.email === process.env.REACT_APP_EMAIL_ADMIN &&
+                            <th>Actions</th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
                     {/* READ UI */}
                     {categories.map(x => 
-                        <SingleCategory key={x.categoriesId} category={x} />
+                        <SingleCategory key={x.catId} category={x} getCategories={getCategories} />
                     )}
                 </tbody>
             </table>
